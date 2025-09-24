@@ -1,0 +1,17 @@
+# Virtualenv
+venv/
+
+# SQLite database
+db.sqlite3
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Django project specific
+*.log
+local_settings.py
+
+# IDE settings
+.vscode/
+.idea/
