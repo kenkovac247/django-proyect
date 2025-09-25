@@ -24,10 +24,32 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*_cve2-zmc(gm916!sp)xili6-*&9=mo!&#dy5i9b+(ff=l%3e'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True  # Temporarily enable for debugging
 
 # Add your EC2 instance's public IP or domain name here
 ALLOWED_HOSTS = ['*']
+
+# CSRF and proxy configuration for load balancer
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.amazonaws.com',
+    'https://*.cloudfront.net',
+    'https://d38z5mn4ejjzoo.cloudfront.net',
+    'https://*.elb.amazonaws.com',
+    'http://*.elb.amazonaws.com',
+    'http://localhost',
+    'http://127.0.0.1',
+]
+
+# CSRF configuration
+CSRF_COOKIE_SECURE = False  # Set to True if using HTTPS only
+CSRF_COOKIE_HTTPONLY = False
+CSRF_USE_SESSIONS = True
+CSRF_COOKIE_SAMESITE = 'Lax'
+
+# Proxy headers configuration
+USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PORT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition
