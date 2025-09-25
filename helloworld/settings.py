@@ -42,21 +42,31 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*', # Permite cualquier IP HTTPS para desarrollo
 ]
 
-# CSRF configuration
-CSRF_COOKIE_SECURE = False  # Set to True if using HTTPS only
+# CSRF configuration for load balancer and CloudFront
+CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_HTTPONLY = False
-CSRF_USE_SESSIONS = True
+CSRF_USE_SESSIONS = False
 CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_DOMAIN = None
 
-# Disable CSRF for development (NOT for production)
-if DEBUG:
-    CSRF_COOKIE_NAME = None
-    CSRF_FAILURE_VIEW = None
-
-# Proxy headers configuration
+# Trust proxy headers from ALB and CloudFront
 USE_X_FORWARDED_HOST = True
 USE_X_FORWARDED_PORT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Additional CSRF configuration for proxy setup
+CSRF_TRUSTED_ORIGINS.extend([
+    'http://goss-3028-django-acg-1-1517049356.us-east-1.elb.amazonaws.com',
+    'https://goss-3028-django-acg-1-1517049356.us-east-1.elb.amazonaws.com',
+    'https://d38z5mn4ejjzoo.cloudfront.net',  # CloudFront domain específico
+    'http://d38z5mn4ejjzoo.cloudfront.net',   # CloudFront HTTP (si aplica)
+])
+
+# Session configuration for load balancer
+SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_DOMAIN = None
 
 
 # Application definition
