@@ -38,6 +38,8 @@ CSRF_TRUSTED_ORIGINS = [
     'http://*.elb.amazonaws.com',
     'http://localhost',
     'http://127.0.0.1',
+    'http://*',  # Permite cualquier IP HTTP para desarrollo
+    'https://*', # Permite cualquier IP HTTPS para desarrollo
 ]
 
 # CSRF configuration
@@ -45,6 +47,11 @@ CSRF_COOKIE_SECURE = False  # Set to True if using HTTPS only
 CSRF_COOKIE_HTTPONLY = False
 CSRF_USE_SESSIONS = True
 CSRF_COOKIE_SAMESITE = 'Lax'
+
+# Disable CSRF for development (NOT for production)
+if DEBUG:
+    CSRF_COOKIE_NAME = None
+    CSRF_FAILURE_VIEW = None
 
 # Proxy headers configuration
 USE_X_FORWARDED_HOST = True
