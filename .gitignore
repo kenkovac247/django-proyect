@@ -16,3 +16,8 @@ local_settings.py
 .vscode/
 .idea/
 userData
+
+venv/
+.env
+__pycache__/
+*.pyc
