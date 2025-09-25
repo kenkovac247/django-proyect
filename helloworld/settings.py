@@ -129,7 +129,14 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_BUCKET_STATIC')
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+# Use CloudFront domain instead of direct S3
+CLOUDFRONT_DOMAIN = os.environ.get('CLOUDFRONT_DOMAIN')
+if CLOUDFRONT_DOMAIN:
+    AWS_S3_CUSTOM_DOMAIN = CLOUDFRONT_DOMAIN
+else:
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
