@@ -191,9 +191,15 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # AWS S3 settings for static and media files
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_BUCKET_STATIC')
 
-# Use CloudFront domain instead of direct S3
+# Static files bucket
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_BUCKET_STATIC')
+AWS_S3_REGION_NAME = 'us-east-1'
+
+# Media files bucket  
+AWS_MEDIA_BUCKET_NAME = os.environ.get('AWS_BUCKET_MEDIA')
+
+# CloudFront configuration
 CLOUDFRONT_DOMAIN = os.environ.get('CLOUDFRONT_DOMAIN')
 if CLOUDFRONT_DOMAIN:
     AWS_S3_CUSTOM_DOMAIN = CLOUDFRONT_DOMAIN
@@ -205,12 +211,12 @@ AWS_S3_OBJECT_PARAMETERS = {
 }
 AWS_LOCATION = 'static'
 
+# Storage backends
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+DEFAULT_FILE_STORAGE = 'helloworld.storage_backends.MediaStorage'
 
 STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
-
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+MEDIA_URL = f'https://{AWS_MEDIA_BUCKET_NAME}.s3.amazonaws.com/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
