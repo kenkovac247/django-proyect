@@ -43,16 +43,32 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 # CSRF configuration for load balancer and CloudFront
-CSRF_COOKIE_SECURE = False
-CSRF_COOKIE_HTTPONLY = False
-CSRF_USE_SESSIONS = False
-CSRF_COOKIE_SAMESITE = 'Lax'
-CSRF_COOKIE_DOMAIN = None
+CSRF_COOKIE_SECURE = True  # False porque ALB termina SSL
+CSRF_COOKIE_HTTPONLY = True  # Permite JavaScript acceso
+CSRF_USE_SESSIONS = False  # Usar cookies, no sesiones
+CSRF_COOKIE_SAMESITE = None  # None para cross-site requests
+CSRF_COOKIE_DOMAIN = os.environ.get('CLOUDFRONT_DOMAIN') or None  # No restringir dominio
+
+# Configuración específica para proxies
+CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
+CSRF_COOKIE_MASKED = True
 
 # Trust proxy headers from ALB and CloudFront
 USE_X_FORWARDED_HOST = True
 USE_X_FORWARDED_PORT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Additional proxy configuration
+SECURE_SSL_REDIRECT = False  # ALB maneja SSL
+SECURE_REDIRECT_EXEMPT = []  # No redirigir desde Django
+
+# Configuración para CloudFront y proxies
+ALLOWED_HOSTS = ['*']
+
+# Configuración adicional para CSRF con proxies
+if 'HTTP_X_FORWARDED_PROTO' in os.environ:
+    CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_SECURE = False
 
 # Additional CSRF configuration for proxy setup
 CSRF_TRUSTED_ORIGINS.extend([
@@ -63,10 +79,17 @@ CSRF_TRUSTED_ORIGINS.extend([
 ])
 
 # Session configuration for load balancer
-SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False  # ALB termina SSL
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = None  # None para cross-site
 SESSION_COOKIE_DOMAIN = None
+SESSION_COOKIE_PATH = '/'
+SESSION_COOKIE_AGE = 1209600  # 2 semanas
+SESSION_SAVE_EVERY_REQUEST = True  # Guardar sesión en cada request
+
+# Temporal: Deshabilitar CSRF para desarrollo si es necesario
+# Descomenta la siguiente línea si sigues teniendo problemas CSRF
+# CSRF_COOKIE_NAME = None
 
 
 # Application definition
